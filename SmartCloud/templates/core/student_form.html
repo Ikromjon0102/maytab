@@ -1,0 +1,71 @@
+{% extends 'base.html' %} {% block title %}{{ title }}{% endblock %} {% block
+content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card p-4 shadow-sm border-0">
+      <h4 class="mb-4 fw-bold text-primary">{{ title }}</h4>
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h6 class="text-muted text-uppercase small fw-bold mb-3">O'quvchi</h6>
+                <div class="row mb-3">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">F.I.SH</label>
+                        {{ form.full_name }}
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Sinf</label>
+                        {{ form.classroom_name }} </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Rasm</label>
+                        {{ form.photo }}
+                    </div>
+                </div>
+
+        <hr class="my-4" />
+
+        <h6 class="text-muted text-uppercase small fw-bold mb-3">Ota-ona</h6>
+        <div class="row bg-light p-3 rounded mx-0">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold"
+              >Ota-ona Telefoni <span class="text-danger">*</span></label
+            >
+            <input
+              type="text"
+              name="parent_phone"
+              class="form-control"
+              placeholder="+998901234567"
+              required
+              value="{{ student.parent.phone|default:'' }}"
+            />
+            <div class="form-text small">
+              Agar raqam bazada bo'lsa, avtomatik ulanadi.
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Ota-ona F.I.SH</label>
+            <input
+              type="text"
+              name="parent_name"
+              class="form-control"
+              placeholder="Valiyev Toshmat"
+              required
+              value="{{ student.parent.full_name|default:'' }}"
+            />
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <a href="{% url 'student_list' %}" class="btn btn-light"
+            >Bekor qilish</a
+          >
+          <button type="submit" class="btn btn-primary px-4">Saqlash</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

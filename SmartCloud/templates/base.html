@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Smart School Cloud{% endblock %}</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      .sidebar {
+        min-height: 100vh;
+        background: #2c3e50;
+        color: white;
+      }
+      .sidebar a {
+        color: #bdc3c7;
+        text-decoration: none;
+        display: block;
+        padding: 10px 20px;
+      }
+      .sidebar a:hover,
+      .sidebar a.active {
+        background: #34495e;
+        color: white;
+        border-left: 4px solid #3498db;
+      }
+      .card {
+        border: none;
+        shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="d-flex">
+      <div
+        class="sidebar d-flex flex-column flex-shrink-0 p-3"
+        style="width: 250px"
+      >
+        <a
+          href="/"
+          class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+        >
+          <i class="fa-solid fa-graduation-cap fa-2x me-2"></i>
+          <span class="fs-4 fw-bold">Smart School</span>
+        </a>
+        <hr />
+        <ul class="nav nav-pills flex-column mb-auto">
+          {% if request.user.is_superuser %}
+          <li class="nav-item">
+            <a href="{% url 'dashboard' %}" class="active">
+              <i class="fa-solid fa-chart-pie me-2"></i> RayONO Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="/admin/core/school/">
+              <i class="fa-solid fa-school me-2"></i> Maktablar
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fa-solid fa-file-excel me-2"></i> Umumiy Hisobot
+            </a>
+          </li>
+          <hr class="text-secondary" />
+          {% endif %}
+
+          <li>
+            <a href="{% url 'dashboard' %}">
+              <i class="fa-solid fa-gauge me-2"></i> Maktab Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'student_list' %}">
+              <i class="fa-solid fa-users me-2"></i> O'quvchilar
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fa-solid fa-chalkboard-user me-2"></i> Xodimlar
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'payroll_report' %}">
+              <i class="fa-solid fa-money-bill-wave me-2"></i> Oylik (Payroll)
+            </a>
+          </li>
+        </ul>
+        <hr />
+        <div class="dropdown">
+          <a
+            href="#"
+            class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+            id="dropdownUser1"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="fa-solid fa-user-circle fa-2x me-2"></i>
+            <strong>{{ request.user.username }}</strong>
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-dark text-small shadow"
+            aria-labelledby="dropdownUser1"
+          >
+            <li><a class="dropdown-item" href="#">Sozlamalar</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="#">Chiqish</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="w-100">
+        <nav class="navbar navbar-light bg-white border-bottom px-4 py-3">
+          <span class="navbar-brand mb-0 h1">
+            {% if request.user.is_superuser %} 🏛️ Tuman Xalq Ta'limi Bo'limi 
+            {% else %} 🏫 {{ request.user.profile.school.name }} {% endif %}
+          </span>
+          <span class="text-muted small">{{ now|date:"d-F Y, l" }}</span>
+        </nav>
+
+        <div class="p-4">
+          {% if messages %} {% for message in messages %}
+          <div
+            class="alert alert-{{ message.tags }} alert-dismissible fade show"
+            role="alert"
+          >
+            {{ message }}
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+            ></button>
+          </div>
+          {% endfor %} {% endif %} {% block content %} {% endblock %}
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

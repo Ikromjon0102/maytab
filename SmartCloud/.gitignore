@@ -1,0 +1,16 @@
+
+# Python
+*.pyc
+__pycache__/
+*~
+*.log
+.coverage
+.tox/
+.mypy_cache/
+.pytest_cache/
+
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/

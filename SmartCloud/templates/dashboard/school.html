@@ -1,0 +1,56 @@
+{% extends 'base.html' %} {% block title %}{{ school.name }}{% endblock %} 
+{% block content %}
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card border-start border-success border-5 p-3">
+      <h5 class="text-success fw-bold">{{ present }}</h5>
+      <p class="text-muted mb-0">Maktabda</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-start border-danger border-5 p-3">
+      <h5 class="text-danger fw-bold">{{ absent }}</h5>
+      <p class="text-muted mb-0">Kelmagan</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-start border-primary border-5 p-3">
+      <h5 class="text-primary fw-bold">{{ attendance_percent }}%</h5>
+      <p class="text-muted mb-0">Davomat foizi</p>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-start border-warning border-5 p-3">
+      <h5 class="text-warning fw-bold">5 / 45</h5>
+      <p class="text-muted mb-0">Kechikkan Xodimlar</p>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card p-3" style="height: 400px">
+      <h5>📊 Haftalik Dinamika</h5>
+      <p class="text-muted text-center mt-5">
+        Bu yerda Chart.js grafigi bo'ladi
+      </p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-3" style="height: 400px">
+      <h5>🏆 Eng faol sinflar</h5>
+      <ul class="list-group list-group-flush mt-3">
+        <li class="list-group-item d-flex justify-content-between">
+          <span>11-A</span> <span class="badge bg-success">98%</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span>5-B</span> <span class="badge bg-success">96%</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span>9-D</span> <span class="badge bg-warning">85%</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

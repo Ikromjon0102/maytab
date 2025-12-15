@@ -1,0 +1,40 @@
+{% extends 'base.html' %} {% block content %}
+<div class="card p-4">
+  <h3>💰 Oylik hisobot: {{ month }}.{{ year }}</h3>
+
+  <table class="table table-bordered table-striped mt-3">
+    <thead class="table-dark">
+      <tr>
+        <th>F.I.SH</th>
+        <th>Lavozim</th>
+        <th>Ish Kuni (Plan)</th>
+        <th>Keldi (Fakt)</th>
+        <th>Ish Soati (Fakt)</th>
+        <th>1 soat narxi</th>
+        <th>JAMI MAOSH</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in report %}
+      <tr>
+        <td>{{ row.full_name }}</td>
+        <td>{{ row.position }}</td>
+        <td>{{ row.plan_days }}</td>
+        <td
+          class="{% if row.fact_days < row.plan_days %}text-danger fw-bold{% endif %}"
+        >
+          {{ row.fact_days }}
+        </td>
+        <td>{{ row.fact_hours }}</td>
+        <td>{{ row.hourly_rate }}</td>
+        <td class="fw-bold text-success">{{ row.total_salary }} so'm</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7">Ma'lumot yo'q</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

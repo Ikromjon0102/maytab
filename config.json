@@ -1,0 +1,18 @@
+{
+    "cloud_url": "http://127.0.0.1:8000/api/upload-logs/",
+    "school_key": "92992c7b-d847-43a5-9aa8-4b723f69bec7",
+    "terminals": [
+        {
+            "ip": "192.168.0.9",
+            "name": "1",
+            "pass": "uchk2025",
+            "user": "admin"
+        },
+        {
+            "ip": "192.168.0.12",
+            "name": "2",
+            "pass": "uchk2025",
+            "user": "admin"
+        }
+    ]
+}
