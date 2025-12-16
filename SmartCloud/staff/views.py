@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from datetime import datetime
 from .services import PayrollCalculator
@@ -23,5 +24,31 @@ def payroll_report(request):
         'month_name': today.strftime('%B')
     }
     return render(request, 'staff/payroll.html', context)
+
+# ... importlar ...
+from .models import Employee
+from .forms import EmployeeForm
+
+@login_required
+def employee_list(request):
+    school = request.user.profile.school
+    employees = Employee.objects.filter(school=school)
+    return render(request, 'staff/employee_list.html', {'employees': employees})
+
+@login_required
+def employee_create(request):
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST, request.FILES)
+        if form.is_valid():
+            emp = form.save(commit=False)
+            emp.school = request.user.profile.school
+            emp.save()
+            messages.success(request, "Xodim qo'shildi")
+            return redirect('employee_list')
+    else:
+        form = EmployeeForm()
+    return render(request, 'staff/employee_form.html', {'form': form, 'title': "Xodim Qo'shish"})
+
+# Edit va Delete ni Studentdagi kabi o'zingiz yozasiz (Copy-Paste va Modelni o'zgartirish)
 
 

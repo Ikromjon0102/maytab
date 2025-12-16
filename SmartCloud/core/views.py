@@ -9,6 +9,12 @@ from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db.models import Q
+from .models import Student, Parent
+
 
 def student_create(request):
     if request.method == 'POST':
@@ -84,8 +90,6 @@ def student_edit(request, pk):
     
     return render(request, 'core/student_form.html', {'form': form, 'title': "Tahrirlash", 'student': student})
 
-
-
 @login_required
 def dashboard(request):
     today = date.today()
@@ -133,8 +137,6 @@ def dashboard(request):
             'attendance_percent': int((present_count/total_students)*100) if total_students > 0 else 0
         }
         return render(request, 'dashboard/school.html', context)
-    
-
 
 def user_login(request):
     if request.method == 'POST':
@@ -152,3 +154,102 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('user_login')
+
+# --- 1. LIST (RO'YXAT) ---
+@login_required
+def student_list(request):
+    # Userning maktabini olamiz
+    school = request.user.profile.school
+
+    # Qidiruv logikasi
+    query = request.GET.get('q', '')
+    students = Student.objects.filter(school=school).order_by('classroom_name', 'full_name')
+
+    if query:
+        students = students.filter(
+            Q(full_name__icontains=query) |
+            Q(classroom_name__icontains=query) |
+            Q(hikvision_id__icontains=query)
+        )
+
+    return render(request, 'core/student_list.html', {'students': students, 'query': query})
+
+
+# --- 2. CREATE (QO'SHISH) ---
+@login_required
+def student_create(request):
+    if request.method == 'POST':
+        form = StudentForm(request.POST, request.FILES)
+        if form.is_valid():
+            student = form.save(commit=False)
+            student.school = request.user.profile.school  # Xavfsizlik: Maktabni majburiy bog'laymiz
+
+            # Parent Logikasi
+            p_phone = form.cleaned_data.get('parent_phone')
+            p_name = form.cleaned_data.get('parent_name')
+
+            if p_phone:
+                clean_phone = p_phone.replace(" ", "").replace("+", "")
+                parent, _ = Parent.objects.get_or_create(
+                    phone=clean_phone,
+                    defaults={'full_name': p_name if p_name else "Noma'lum"}
+                )
+                student.parent = parent
+
+            student.save()
+            messages.success(request, f"{student.full_name} qo'shildi! ID: {student.hikvision_id}")
+            return redirect('student_list')
+    else:
+        form = StudentForm()
+
+    return render(request, 'core/student_form.html', {'form': form, 'title': "O'quvchi Qo'shish"})
+
+
+# --- 3. EDIT (TAHRIRLASH) ---
+@login_required
+def student_edit(request, pk):
+    school = request.user.profile.school
+    # get_object_or_404 da school=school deyish shart (Birov birovni o'quvchisini o'zgartirolmasligi uchun)
+    student = get_object_or_404(Student, pk=pk, school=school)
+
+    if request.method == 'POST':
+        form = StudentForm(request.POST, request.FILES, instance=student)
+        if form.is_valid():
+            student = form.save(commit=False)
+
+            # Parent update
+            p_phone = form.cleaned_data.get('parent_phone')
+            if p_phone:
+                clean_phone = p_phone.replace(" ", "").replace("+", "")
+                parent, _ = Parent.objects.get_or_create(phone=clean_phone)
+                student.parent = parent
+
+            # Agar rasm o'zgarsa -> sync o'chadi
+            if 'photo' in form.changed_data:
+                student.is_synced = False
+
+            student.save()
+            messages.success(request, "Ma'lumot yangilandi!")
+            return redirect('student_list')
+    else:
+        # Formani ochganda eski parent telefonini ko'rsatish
+        initial_data = {}
+        if student.parent:
+            initial_data = {'parent_phone': student.parent.phone, 'parent_name': student.parent.full_name}
+        form = StudentForm(instance=student, initial=initial_data)
+
+    return render(request, 'core/student_form.html', {'form': form, 'title': "Tahrirlash", 'student': student})
+
+
+# --- 4. DELETE (O'CHIRISH) ---
+@login_required
+def student_delete(request, pk):
+    school = request.user.profile.school
+    student = get_object_or_404(Student, pk=pk, school=school)
+
+    if request.method == 'POST':
+        student.delete()
+        messages.warning(request, "O'quvchi o'chirildi!")
+        return redirect('student_list')
+
+    return render(request, 'core/student_delete.html', {'student': student})
