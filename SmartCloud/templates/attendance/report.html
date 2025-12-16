@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">📅 Davomat Jurnali</h4>
+    
+    <form method="get" class="d-flex gap-2">
+        <input type="hidden" name="tab" value="{{ tab }}">
+        <input type="date" name="date" class="form-control" value="{{ selected_date }}" onchange="this.form.submit()">
+    </form>
+</div>
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link {% if tab == 'student' %}active fw-bold{% endif %}" 
+           href="?date={{ selected_date }}&tab=student">
+           👨‍🎓 O'quvchilar
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if tab == 'staff' %}active fw-bold{% endif %}" 
+           href="?date={{ selected_date }}&tab=staff">
+           💼 Xodimlar
+        </a>
+    </li>
+</ul>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>F.I.SH</th>
+                    {% if tab == 'student' %}<th>Sinf</th>{% endif %}
+                    {% if tab == 'staff' %}<th>Plan (Kirish)</th>{% endif %}
+                    <th>Kelgan vaqti</th>
+                    {% if tab == 'staff' %}<th>Ketgan vaqti</th>{% endif %}
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in report_data %}
+                <tr>
+                    <td class="fw-bold">{{ row.name }}</td>
+                    
+                    {% if tab == 'student' %}
+                        <td><span class="badge bg-light text-dark border">{{ row.class }}</span></td>
+                    {% endif %}
+
+                    {% if tab == 'staff' %}
+                        <td>{{ row.plan_start|date:"H:i" }}</td>
+                    {% endif %}
+
+                    <td class="font-monospace">{{ row.arrival }}</td>
+
+                    {% if tab == 'staff' %}
+                        <td class="font-monospace">{{ row.left }}</td>
+                    {% endif %}
+
+                    <td>
+                        {% if row.status == 'present' %}
+                            <span class="badge bg-success">Kelgan</span>
+                        {% elif row.status == 'late' %}
+                            <span class="badge bg-warning text-dark">Kechikkan</span>
+                        {% else %}
+                            <span class="badge bg-danger">Kelmadi</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center py-4">Ma'lumot topilmadi</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -260,7 +260,8 @@ def sync_users_downstream(api_root, school_key, terminals):
             if has_photo and os.path.exists(temp_img): os.remove(temp_img)
 
             if all_ok:
-                synced_ids.append(user['id'])
+                # Biz serverga "Mana bu Hikvision ID li odamlar yuklandi" deb aytamiz
+                synced_ids.append(user['hikvision_id'])
                 log(f"   ✅ {user['full_name']} yuklandi.")
 
         if synced_ids:

@@ -10,6 +10,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
     path('', include('staff.urls')),
+    path('', include('attendance.urls')),
     path('api/upload-logs/', ReceiveLogsAPI.as_view(), name='receive-logs'),
     path('api/get-users/', GetNewUsersAPI.as_view()),
     path('api/confirm-sync/', ConfirmUserSyncAPI.as_view()),

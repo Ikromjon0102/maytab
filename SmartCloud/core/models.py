@@ -64,6 +64,7 @@ class Parent(models.Model):
 class Classroom(models.Model):
     name = models.CharField(max_length=50)
     school = models.ForeignKey(School, on_delete=models.CASCADE)
+    lesson_time = models.ForeignKey(Shift, on_delete=models.CASCADE, related_name="lesson_time", null=True, blank=True)
     
     def __str__(self): return self.name 
 
@@ -87,7 +88,8 @@ class Student(models.Model):
         verbose_name="Yuz rasmi"
     )
     
-    classroom_name = models.CharField(max_length=50) 
+    classroom_name = models.ForeignKey(Classroom, on_delete=models.SET_NULL, null=True, related_name="classrooms")
+    # classroom_name = models.CharField(max_length=50, blank=True, null=True)
     is_synced = models.BooleanField(default=False) # Terminalga yuklanganmi?
 
     class Meta:
@@ -161,10 +163,6 @@ class Holiday(models.Model):
         return f"{self.date.strftime('%d-%m')} - {self.name}"
 
 
-
-
-# ... (Eski modellar: School, Student, Parent ...)
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Maktab")
@@ -185,3 +183,5 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+

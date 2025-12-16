@@ -9,6 +9,7 @@ admin.site.register(models.School, SchoolAdmin)
 
 
 admin.site.register(models.Shift)
+admin.site.register(models.Classroom)
 admin.site.register(models.Parent)
 admin.site.register(models.UserProfile)
 

@@ -34,22 +34,50 @@
                     </div>
 
                     <h6 class="text-uppercase text-muted small fw-bold mt-4 mb-3 border-bottom pb-2">Lavozim va Oylik</h6>
-                    
+
                     <div class="row bg-light p-3 rounded mx-0">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Lavozim turi</label>
                             {{ form.position_type }}
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">1 soatlik narx (so'm)</label>
-                            {{ form.base_salary }}
-                            <div class="form-text small">Masalan: 45000</div>
+                       <h6 class="text-uppercase text-muted small fw-bold mt-4 mb-3 border-bottom pb-2">Ish tartibi va Yuklama</h6>
+
+                    <div class="row bg-light p-3 rounded mx-0 mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Ish boshlanishi</label>
+                            {{ form.start_time }}
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Ish tugashi</label>
+                            {{ form.end_time }}
+                        </div>
+                    </div>
+
+                    <div class="row bg-light p-3 rounded mx-0">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Haftalik yuklama (soat)</label>
+                            <label class="form-label">O'quv soati</label>
                             {{ form.teaching_hours }}
-                            <div class="form-text small">Dars soati</div>
                         </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Ped. yuklama</label>
+                            {{ form.pedagogical_load }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Qo'shimcha soat</label>
+                            {{ form.addition_hours }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">1 soat narxi</label>
+                            {{ form.base_salary }}
+                        </div>
+
+                        <div class="col-12 mt-2">
+                            <div class="alert alert-info py-2 small">
+                                <i class="fa fa-info-circle"></i>
+                                Jami haftalik yuklama: <strong id="total_hours">0</strong> soat
+                            </div>
+                        </div>
+                    </div>
                     </div>
 
                     <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">

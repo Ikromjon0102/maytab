@@ -80,7 +80,7 @@ class PayrollCalculator:
 
             # 3. Formulani qo'llaymiz
             # Haftalik soat * 4.3 (O'rtacha oy haftasi)
-            weekly_load = emp.teaching_hours + emp.pedagogical_load + emp.additional_hours
+            weekly_load = emp.teaching_hours + emp.pedagogical_load + emp.addition_hours
             monthly_plan_hours = weekly_load * 4.3
 
             # 1 kunga to'g'ri keladigan o'rtacha soat

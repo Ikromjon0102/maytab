@@ -13,6 +13,6 @@ class StudentForm(forms.ModelForm):
         fields = ['full_name', 'classroom_name', 'photo'] # ID va School avtomat
         widgets = {
             'full_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'classroom_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '5-A'}),
+            # 'classroom_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '5-A'}),
             'photo': forms.FileInput(attrs={'class': 'form-control'}),
         }
