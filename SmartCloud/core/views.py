@@ -1,10 +1,10 @@
-from .models import Student, Parent, Classroom
-from .forms import StudentForm
+from .models import Student, Parent, Classroom, Shift
+from .forms import StudentForm, ClassroomForm, ShiftForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import School, Student
 from attendance.models import DailyAttendance
-from datetime import date
+from datetime import date, timedelta
 from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import login, logout
@@ -98,17 +98,35 @@ def dashboard(request):
     if request.user.is_superuser:
         total_schools = School.objects.filter(is_active=True).count()
         total_students = Student.objects.count()
-        
+        chart_labels = []
+        chart_data = []
         # Bugungi umumiy davomat
         present_count = DailyAttendance.objects.filter(date=today).count()
-        
+        for i in range(6, -1, -1):
+            date_cursor = today - timedelta(days=i)
+            if date_cursor.weekday() == 6: continue  # Yakshanba kerak emas
+
+            chart_labels.append(date_cursor.strftime("%d-%b"))
+
+            # DIQQAT: Bu yerda school=... filteri YO'Q.
+            # Demak, bazadagi HAMMA maktablarning davomatini sanaydi.
+            cnt = DailyAttendance.objects.filter(date=date_cursor).count()
+            chart_data.append(cnt)
+
         context = {
             'total_schools': total_schools,
-            'total_students': total_students,
-            'present_today': present_count,
-            'schools': School.objects.all() # Jadval uchun
+            'total_students': Student.objects.count(),
+            'total_present': DailyAttendance.objects.filter(date=today).count(),
+            'schools': School.objects.all(),
+
+            # Grafik uchun
+            'chart_labels': chart_labels,
+            'chart_data': chart_data,
         }
         return render(request, 'dashboard/rayono.html', context)
+
+        # 2. MAKTAB DIREKTORI
+
 
     # 2. AGAR MAKTAB DIREKTORI BO'LSA
     else:
@@ -163,12 +181,12 @@ def student_list(request):
 
     # Qidiruv logikasi
     query = request.GET.get('q', '')
-    students = Student.objects.filter(school=school).order_by('classroom_name', 'full_name')
+    students = Student.objects.filter(school=school).order_by('classroom', 'full_name')
 
     if query:
         students = students.filter(
             Q(full_name__icontains=query) |
-            Q(classroom_name__icontains=query) |
+            Q(classroom__icontains=query) |
             Q(hikvision_id__icontains=query)
         )
 
@@ -253,3 +271,48 @@ def student_delete(request, pk):
         return redirect('student_list')
 
     return render(request, 'core/student_delete.html', {'student': student})
+
+
+
+# --- SINF (CLASSROOM) ---
+@login_required
+def classroom_list(request):
+    school = request.user.profile.school
+    classrooms = Classroom.objects.filter(school=school).select_related('head_teacher', 'shift')
+    return render(request, 'core/classroom_list.html', {'classrooms': classrooms})
+
+@login_required
+def classroom_create(request):
+    school = request.user.profile.school
+    if request.method == 'POST':
+        # Formga maktabni argument qilib beramiz
+        form = ClassroomForm(school, request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.school = school
+            obj.save()
+            return redirect('classroom_list')
+    else:
+        form = ClassroomForm(school) # Formni ochganda ham school kerak
+    return render(request, 'core/generic_form.html', {'form': form, 'title': 'Sinf Qo\'shish'})
+
+# --- SMENA (SHIFT) ---
+@login_required
+def shift_list(request):
+    school = request.user.profile.school
+    shifts = Shift.objects.filter(school=school)
+    return render(request, 'core/shift_list.html', {'shifts': shifts})
+
+@login_required
+def shift_create(request):
+    school = request.user.profile.school
+    if request.method == 'POST':
+        form = ShiftForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.school = school
+            obj.save()
+            return redirect('shift_list')
+    else:
+        form = ShiftForm()
+    return render(request, 'core/generic_form.html', {'form': form, 'title': 'Smena Qo\'shish'})

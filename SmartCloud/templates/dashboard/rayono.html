@@ -29,7 +29,16 @@
     </div>
   </div>
 </div>
-
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-4 shadow-sm">
+            <h5 class="fw-bold mb-3">📈 Tuman bo'yicha umumiy davomat dinamikasi</h5>
+            <div style="height: 350px; width: 100%;">
+                <canvas id="rayonoChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="card p-3">
   <h5>🏫 Maktablar Onlayn Holati</h5>
   <table class="table table-hover mt-3">
@@ -77,4 +86,37 @@
             </tbody>
   </table>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('rayonoChart').getContext('2d');
+
+        const labels = {{ chart_labels|safe }};
+        const dataPoints = {{ chart_data|safe }};
+
+        new Chart(ctx, {
+            type: 'line', // RayONO uchun "Line" (Chiziqli) grafik chiroyli ko'rinadi
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jami kelgan o\'quvchilar (Tuman bo\'yicha)',
+                    data: dataPoints,
+                    borderColor: '#2ecc71', // Yashil rang
+                    backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                    borderWidth: 3,
+                    fill: true, // Tagini bo'yash
+                    tension: 0.3 // Egri chiziq silliqligi
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}
+

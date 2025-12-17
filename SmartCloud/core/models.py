@@ -13,6 +13,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from datetime import timedelta
 
+
 class School(models.Model):
     name = models.CharField(max_length=255, verbose_name="Maktab nomi")
     api_key = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -39,13 +40,38 @@ class School(models.Model):
         # Agar farq 5 daqiqadan (300 soniya) kam bo'lsa -> Online
         return diff.total_seconds() < 600
 
+
+
 class Shift(models.Model):
-    school = models.ForeignKey(School, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50) 
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    
-    def __str__(self): return f"{self.name} ({self.school.name})"
+    school = models.ForeignKey('School', on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, verbose_name="Smena nomi")  # 1-smena
+    start_time = models.TimeField(verbose_name="Boshlanish vaqti")
+    end_time = models.TimeField(verbose_name="Tugash vaqti")
+
+    def __str__(self): return f"{self.name} ({self.start_time}-{self.end_time})"
+
+
+# 2. SINF MODELI
+class Classroom(models.Model):
+    school = models.ForeignKey('School', on_delete=models.CASCADE)
+    name = models.CharField(max_length=20, verbose_name="Sinf nomi")  # 5-A, 11-B
+
+    # Sinf rahbari (Bitta o'qituvchi faqat bitta sinfga rahbar bo'la olsin -> OneToOne)
+    head_teacher = models.OneToOneField(
+        "staff.Employee",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="my_class",
+        verbose_name="Sinf rahbari"
+    )
+
+    # Smena (Sinf qaysi smenada o'qiydi)
+    shift = models.ForeignKey(Shift, on_delete=models.SET_NULL, null=True, verbose_name="Smena")
+
+    def __str__(self): return self.name
+
+
 
 class Parent(models.Model):
     full_name = models.CharField(max_length=255)
@@ -60,13 +86,6 @@ class Parent(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self): return self.full_name
-
-class Classroom(models.Model):
-    name = models.CharField(max_length=50)
-    school = models.ForeignKey(School, on_delete=models.CASCADE)
-    lesson_time = models.ForeignKey(Shift, on_delete=models.CASCADE, related_name="lesson_time", null=True, blank=True)
-    
-    def __str__(self): return self.name 
 
 
 class Student(models.Model):
@@ -88,7 +107,8 @@ class Student(models.Model):
         verbose_name="Yuz rasmi"
     )
     
-    classroom_name = models.ForeignKey(Classroom, on_delete=models.SET_NULL, null=True, related_name="classrooms")
+    # classroom_name = models.ForeignKey(Classroom, on_delete=models.SET_NULL, null=True, related_name="classrooms")
+    classroom = models.ForeignKey(Classroom, on_delete=models.SET_NULL, null=True, related_name="students")
     # classroom_name = models.CharField(max_length=50, blank=True, null=True)
     is_synced = models.BooleanField(default=False) # Terminalga yuklanganmi?
 

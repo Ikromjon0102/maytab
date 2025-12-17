@@ -67,8 +67,8 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="#" class="btn btn-sm btn-light text-primary"><i class="fa fa-edit"></i></a>
-                    <a href="#" class="btn btn-sm btn-light text-danger"><i class="fa fa-trash"></i></a>
+                    <a href="{% url 'employee_edit' emp.pk %}" class="btn btn-sm btn-light text-primary"><i class="fa fa-edit"></i></a>
+                    <a href="{% url 'employee_delete' emp.pk %}" class="btn btn-sm btn-light text-danger"><i class="fa fa-trash"></i></a>
                 </td>
             </tr>
             {% empty %}

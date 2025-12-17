@@ -1,56 +1,129 @@
-{% extends 'base.html' %} {% block title %}{{ school.name }}{% endblock %} 
+{% extends 'base.html' %}
+{% block title %}Maktab Dashboard{% endblock %}
+
 {% block content %}
-<div class="row mb-4">
-  <div class="col-md-3">
-    <div class="card border-start border-success border-5 p-3">
-      <h5 class="text-success fw-bold">{{ present }}</h5>
-      <p class="text-muted mb-0">Maktabda</p>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-4 border-primary shadow-sm">
+            <h6 class="text-muted text-uppercase mb-2 small fw-bold">Jami O'quvchi</h6>
+            <h3 class="fw-bold text-primary mb-0">{{ total_students }}</h3>
+        </div>
     </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card border-start border-danger border-5 p-3">
-      <h5 class="text-danger fw-bold">{{ absent }}</h5>
-      <p class="text-muted mb-0">Kelmagan</p>
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-4 border-success shadow-sm">
+            <h6 class="text-muted text-uppercase mb-2 small fw-bold">Maktabda</h6>
+            <h3 class="fw-bold text-success mb-0">{{ present }}</h3>
+        </div>
     </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card border-start border-primary border-5 p-3">
-      <h5 class="text-primary fw-bold">{{ attendance_percent }}%</h5>
-      <p class="text-muted mb-0">Davomat foizi</p>
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-4 border-danger shadow-sm">
+            <h6 class="text-muted text-uppercase mb-2 small fw-bold">Kelmadi</h6>
+            <h3 class="fw-bold text-danger mb-0">{{ absent }}</h3>
+        </div>
     </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card border-start border-warning border-5 p-3">
-      <h5 class="text-warning fw-bold">5 / 45</h5>
-      <p class="text-muted mb-0">Kechikkan Xodimlar</p>
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-4 border-warning shadow-sm">
+            <h6 class="text-muted text-uppercase mb-2 small fw-bold">Davomat Foizi</h6>
+            <h3 class="fw-bold text-warning mb-0">{{ percent }}%</h3>
+        </div>
     </div>
-  </div>
 </div>
 
-<div class="row">
-  <div class="col-md-8">
-    <div class="card p-3" style="height: 400px">
-      <h5>📊 Haftalik Dinamika</h5>
-      <p class="text-muted text-center mt-5">
-        Bu yerda Chart.js grafigi bo'ladi
-      </p>
+<div class="row g-4">
+
+    <div class="col-lg-8">
+        <div class="card p-4 h-100 shadow-sm border-0">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold m-0 text-dark">📊 Haftalik Davomat Dinamikasi</h5>
+                <span class="badge bg-light text-dark border">So'nggi 7 kun</span>
+            </div>
+
+            <div style="height: 300px; width: 100%;">
+                <canvas id="schoolChart"></canvas>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card p-3" style="height: 400px">
-      <h5>🏆 Eng faol sinflar</h5>
-      <ul class="list-group list-group-flush mt-3">
-        <li class="list-group-item d-flex justify-content-between">
-          <span>11-A</span> <span class="badge bg-success">98%</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-          <span>5-B</span> <span class="badge bg-success">96%</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-          <span>9-D</span> <span class="badge bg-warning">85%</span>
-        </li>
-      </ul>
+
+    <div class="col-lg-4">
+        <div class="card p-4 h-100 shadow-sm border-0">
+            <h5 class="fw-bold mb-4 text-dark">🏆 Eng faol sinflar</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0 border-0 mb-2">
+                    <div>
+                        <span class="fw-bold d-block">11-A sinf</span>
+                        <div class="progress mt-1" style="height: 6px; width: 120px;">
+                            <div class="progress-bar bg-success" style="width: 98%"></div>
+                        </div>
+                    </div>
+                    <span class="badge bg-success rounded-pill">98%</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0 border-0 mb-2">
+                    <div>
+                        <span class="fw-bold d-block">5-B sinf</span>
+                        <div class="progress mt-1" style="height: 6px; width: 120px;">
+                            <div class="progress-bar bg-success" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    <span class="badge bg-success rounded-pill">95%</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0 border-0 mb-2">
+                    <div>
+                        <span class="fw-bold d-block">9-G sinf</span>
+                        <div class="progress mt-1" style="height: 6px; width: 120px;">
+                            <div class="progress-bar bg-warning" style="width: 82%"></div>
+                        </div>
+                    </div>
+                    <span class="badge bg-warning rounded-pill">82%</span>
+                </li>
+            </ul>
+
+            <div class="mt-auto text-center pt-3 border-top">
+                <a href="#" class="text-decoration-none small fw-bold">Barcha sinflarni ko'rish <i class="fa fa-arrow-right"></i></a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('schoolChart').getContext('2d');
+
+        // Backenddan kelgan ma'lumotlar (views.py dan)
+        const labels = {{ chart_labels|safe }};
+        const dataPoints = {{ chart_data|safe }};
+
+        new Chart(ctx, {
+            type: 'bar', // Maktab uchun USTUNLI grafik
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Kelgan O\'quvchilar',
+                    data: dataPoints,
+                    backgroundColor: '#3498db', // Ko'k rang
+                    borderRadius: 5, // Qirralari yumshoq
+                    barThickness: 40 // Ustun qalinligi
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false } // Tepadagi yozuv shart emas
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [2, 4], color: '#f0f0f0' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
 {% endblock %}

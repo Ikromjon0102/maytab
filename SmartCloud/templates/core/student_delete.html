@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card p-4 text-center border-danger">
+            <i class="fa-solid fa-triangle-exclamation fa-4x text-danger mb-3"></i>
+            <h4>Ishonchingiz komilmi?</h4>
+            <p>{{ type }}: <strong>{{ object }}</strong> butunlay o'chiriladi.</p>
+            <form method="post">
+                {% csrf_token %}
+                <a href="javascript:history.back()" class="btn btn-secondary">Bekor qilish</a>
+                <button type="submit" class="btn btn-danger">Ha, o'chirilsin</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

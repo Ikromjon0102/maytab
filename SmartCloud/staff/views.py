@@ -51,5 +51,41 @@ def employee_create(request):
     return render(request, 'staff/employee_form.html', {'form': form, 'title': "Xodim Qo'shish"})
 
 # Edit va Delete ni Studentdagi kabi o'zingiz yozasiz (Copy-Paste va Modelni o'zgartirish)
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Employee
+from .forms import EmployeeForm
 
+
+# --- EDIT (YANGILASH) ---
+@login_required
+def employee_edit(request, pk):
+    school = request.user.profile.school
+    employee = get_object_or_404(Employee, pk=pk, school=school)
+
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST, request.FILES, instance=employee)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Xodim ma'lumotlari yangilandi!")
+            return redirect('employee_list')
+    else:
+        form = EmployeeForm(instance=employee)
+
+    return render(request, 'staff/employee_form.html', {'form': form, 'title': "Xodimni Tahrirlash"})
+
+
+# --- DELETE (O'CHIRISH) ---
+@login_required
+def employee_delete(request, pk):
+    school = request.user.profile.school
+    employee = get_object_or_404(Employee, pk=pk, school=school)
+
+    if request.method == 'POST':
+        employee.delete()
+        messages.warning(request, "Xodim o'chirildi!")
+        return redirect('employee_list')
+
+    # Tasdiqlash sahifasi (oddiy HTML)
+    return render(request, 'core/student_delete.html', {'object': employee, 'type': 'Xodim'})
 

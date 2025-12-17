@@ -67,7 +67,7 @@ def attendance_report(request):
 
             report.append({
                 'name': stu.full_name,
-                'class': stu.classroom_name,
+                'class': stu.classroom,
                 'status': status,
                 'arrival': arrival
             })

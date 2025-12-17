@@ -1,7 +1,9 @@
 from django.db import models
 from core.models import School
 from core.utils import generate_hikvision_id
-from core.models import Student
+from core.models import Student, Shift
+
+# from SmartCloud.core.models import Shift
 
 
 class Employee(models.Model):
